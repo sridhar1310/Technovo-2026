@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { Lock, Unlock, Zap, Sparkles, ChevronRight } from 'lucide-react';
+import { Lock, Unlock, Zap, Sparkles, ChevronRight, Scissors } from 'lucide-react';
 
 // Typing animation component
 const TypingText = ({ text, onComplete }: { text: string; onComplete?: () => void }) => {
@@ -39,9 +39,236 @@ const TypingText = ({ text, onComplete }: { text: string; onComplete?: () => voi
   );
 };
 
+// Ribbon Cutting Ceremony Animation
+const RibbonCutting = ({ onComplete }: { onComplete: () => void }) => {
+  const [phase, setPhase] = useState<'enter' | 'cut' | 'done'>('enter');
+
+  useEffect(() => {
+    // Phase 1: Scissors move to center (1.2s)
+    const cutTimer = setTimeout(() => setPhase('cut'), 1200);
+    // Phase 2: Ribbon splits and falls (after cut animation)
+    const doneTimer = setTimeout(() => {
+      setPhase('done');
+      onComplete();
+    }, 3200);
+
+    return () => {
+      clearTimeout(cutTimer);
+      clearTimeout(doneTimer);
+    };
+  }, [onComplete]);
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[100] pointer-events-none flex items-center justify-center"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: phase === 'done' ? 0 : 1 }}
+      transition={{ duration: 0.8 }}
+    >
+      {/* Ribbon Left Half */}
+      <motion.div
+        className="absolute left-0 h-16 md:h-20 flex items-center"
+        style={{ top: '50%', marginTop: '-2.5rem', right: '50%' }}
+        initial={{ x: 0, y: 0, rotate: 0 }}
+        animate={
+          phase === 'cut'
+            ? { x: -120, y: 200, rotate: -25, opacity: 0 }
+            : { x: 0, y: 0, rotate: 0, opacity: 1 }
+        }
+        transition={
+          phase === 'cut'
+            ? { duration: 1.5, ease: [0.36, 0, 0.66, -0.56] }
+            : { duration: 0.5 }
+        }
+      >
+        {/* Ribbon body */}
+        <div className="w-full h-10 md:h-12 relative overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(180deg, #dc2626 0%, #ef4444 25%, #fca5a5 40%, #ef4444 55%, #dc2626 75%, #b91c1c 100%)',
+              boxShadow: '0 4px 20px rgba(220, 38, 38, 0.4)',
+            }}
+          />
+          {/* Ribbon shine */}
+          <div
+            className="absolute inset-0 opacity-40"
+            style={{
+              background: 'linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.5) 35%, transparent 45%)',
+            }}
+          />
+          {/* Gold edge lines */}
+          <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #fbbf24, transparent)' }} />
+          <div className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #fbbf24, transparent)' }} />
+        </div>
+        {/* Bow on left */}
+        <div className="absolute left-4 top-1/2 -translate-y-1/2">
+          <div className="relative">
+            <motion.div
+              className="w-8 h-8 rounded-full border-2 border-red-400/60"
+              style={{ background: 'radial-gradient(circle, #fca5a5, #dc2626)' }}
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Ribbon Right Half */}
+      <motion.div
+        className="absolute right-0 h-16 md:h-20 flex items-center"
+        style={{ top: '50%', marginTop: '-2.5rem', left: '50%' }}
+        initial={{ x: 0, y: 0, rotate: 0 }}
+        animate={
+          phase === 'cut'
+            ? { x: 120, y: 200, rotate: 25, opacity: 0 }
+            : { x: 0, y: 0, rotate: 0, opacity: 1 }
+        }
+        transition={
+          phase === 'cut'
+            ? { duration: 1.5, ease: [0.36, 0, 0.66, -0.56] }
+            : { duration: 0.5 }
+        }
+      >
+        {/* Ribbon body */}
+        <div className="w-full h-10 md:h-12 relative overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(180deg, #dc2626 0%, #ef4444 25%, #fca5a5 40%, #ef4444 55%, #dc2626 75%, #b91c1c 100%)',
+              boxShadow: '0 4px 20px rgba(220, 38, 38, 0.4)',
+            }}
+          />
+          {/* Ribbon shine */}
+          <div
+            className="absolute inset-0 opacity-40"
+            style={{
+              background: 'linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.5) 35%, transparent 45%)',
+            }}
+          />
+          {/* Gold edge lines */}
+          <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #fbbf24, transparent)' }} />
+          <div className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #fbbf24, transparent)' }} />
+        </div>
+        {/* Bow on right */}
+        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          <div className="relative">
+            <motion.div
+              className="w-8 h-8 rounded-full border-2 border-red-400/60"
+              style={{ background: 'radial-gradient(circle, #fca5a5, #dc2626)' }}
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Scissors */}
+      <motion.div
+        className="absolute z-[110]"
+        style={{ top: '50%', marginTop: '-2rem' }}
+        initial={{ x: 250, rotate: -90 }}
+        animate={
+          phase === 'enter'
+            ? { x: 0, rotate: -90 }
+            : phase === 'cut'
+              ? { x: 0, rotate: 0, scale: [1, 1.3, 1] }
+              : { opacity: 0, y: -50 }
+        }
+        transition={
+          phase === 'enter'
+            ? { duration: 1, ease: 'easeOut' }
+            : phase === 'cut'
+              ? { duration: 0.5, ease: 'easeInOut' }
+              : { duration: 0.5 }
+        }
+      >
+        <div className="relative">
+          {/* Glow behind scissors */}
+          <motion.div
+            className="absolute inset-0 -m-4 rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(251, 191, 36, 0.4), transparent)' }}
+            animate={phase === 'cut' ? { scale: [1, 2, 0], opacity: [1, 0.8, 0] } : {}}
+            transition={{ duration: 0.8 }}
+          />
+          {/* Spark effect on cut */}
+          {phase === 'cut' && (
+            <>
+              {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1.5 h-1.5 bg-yellow-400 rounded-full"
+                  style={{ top: '50%', left: '50%' }}
+                  initial={{ x: 0, y: 0, opacity: 1 }}
+                  animate={{
+                    x: Math.cos((i * Math.PI * 2) / 8) * 60,
+                    y: Math.sin((i * Math.PI * 2) / 8) * 60,
+                    opacity: 0,
+                    scale: [1, 0],
+                  }}
+                  transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+                />
+              ))}
+            </>
+          )}
+          <Scissors className="w-12 h-12 md:w-16 md:h-16 text-yellow-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.6)]" />
+        </div>
+      </motion.div>
+
+      {/* Cut flash effect */}
+      {phase === 'cut' && (
+        <motion.div
+          className="absolute inset-0"
+          style={{ top: '50%', marginTop: '-4rem', height: '8rem' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.6, 0] }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          <div
+            className="w-full h-full"
+            style={{ background: 'radial-gradient(ellipse at center, rgba(251, 191, 36, 0.3), transparent 70%)' }}
+          />
+        </motion.div>
+      )}
+
+      {/* Falling ribbon particles */}
+      {phase === 'cut' && (
+        <>
+          {[...Array(12)].map((_, i) => (
+            <motion.div
+              key={`particle-${i}`}
+              className="absolute w-3 h-8 rounded-sm"
+              style={{
+                top: '50%',
+                left: `${40 + Math.random() * 20}%`,
+                background: i % 2 === 0
+                  ? 'linear-gradient(180deg, #dc2626, #ef4444)'
+                  : 'linear-gradient(180deg, #fbbf24, #f59e0b)',
+              }}
+              initial={{ y: 0, opacity: 1, rotate: 0 }}
+              animate={{
+                y: 400 + Math.random() * 200,
+                x: (Math.random() - 0.5) * 200,
+                opacity: 0,
+                rotate: Math.random() * 720 - 360,
+              }}
+              transition={{
+                duration: 1.5 + Math.random() * 0.5,
+                delay: 0.2 + Math.random() * 0.3,
+                ease: 'easeIn',
+              }}
+            />
+          ))}
+        </>
+      )}
+    </motion.div>
+  );
+};
+
 export default function App() {
   const [isLocked, setIsLocked] = useState(true);
   const [showContent, setShowContent] = useState(false);
+  const [showRibbon, setShowRibbon] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -50,6 +277,7 @@ export default function App() {
     if (!isLocked) return;
 
     setIsLocked(false);
+    setShowRibbon(true);
 
     // Play sound
     if (audioRef.current) {
@@ -117,6 +345,11 @@ export default function App() {
         src="https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73456.mp3"
         preload="auto"
       />
+
+      {/* Ribbon Cutting Animation */}
+      {showRibbon && (
+        <RibbonCutting onComplete={() => setShowRibbon(false)} />
+      )}
 
       <AnimatePresence mode="wait">
         {isLocked ? (
